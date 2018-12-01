@@ -5,8 +5,11 @@
 """
 
 if __name__ == '__main__':
-    output = 0
     with open('01_input.txt', 'r') as stream:
-        for line in stream:
-            output += int(line)
-    print(output)
+        frequency_changes = [int(frequency) for frequency
+                             in stream.readlines()]
+
+    current_frequency = 0
+    for frequency_change in frequency_changes:
+        current_frequency += frequency_change
+    print(current_frequency)

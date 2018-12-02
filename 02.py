@@ -38,12 +38,38 @@ def countains_doubles_or_triples(id_):
     return bool(doubles), bool(triples)
 
 
+def distance(id_1, id_2):
+    """
+    >>> distance('abcde', 'axcye')
+    2
+    >>> distance('fghij', 'fguij')
+    1
+    >>> distance('abcde', 'abcde')
+    0
+    """
+    return sum(letter_1 != letter_2 for letter_1, letter_2 in zip(id_1, id_2))
+
+
 if __name__ == '__main__':
-    doubles, triples = 0, 0
+    # read all ids
     with open('02_input.txt', 'r') as stream:
-        for line in stream:
-            contains_double, contains_triple = \
-                countains_doubles_or_triples(line)
-            doubles += contains_double
-            triples += contains_triple
+        content = [line.rstrip() for line in stream.readlines()]
+
+    # find doubles and triples and calculate checksum
+    doubles, triples = 0, 0
+    for line in content:
+        contains_double, contains_triple = \
+            countains_doubles_or_triples(line)
+        doubles += contains_double
+        triples += contains_triple
     print(doubles * triples)
+
+    # find closest ids and print intersection
+    close_ids = []
+    for line_number, line_1 in enumerate(content):
+        for line_2 in content[line_number+1:]:
+            if distance(line_1, line_2) == 1:
+                close_ids.append((line_1, line_2))
+    print(close_ids)
+    print(''.join(letter_1 for letter_1, letter_2 in zip(*close_ids[0])
+                  if letter_1 == letter_2))

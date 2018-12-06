@@ -34,8 +34,4 @@ if __name__ == '__main__':
                 fabric[coordinates].add(p['id_'])
 
     # count squares with more than one claim
-    count = 0
-    for square in fabric.values():
-        if len(square) >= 2:
-            count += 1
-    print(count)
+    print(sum(len(square) >= 2 for square in fabric.values()))

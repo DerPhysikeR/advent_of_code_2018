@@ -27,11 +27,24 @@ def parse_line(line):
 
 if __name__ == '__main__':
     fabric = defaultdict(set)
+    sizes = {}
     with open('03_input.txt', 'r') as stream:
         for line in stream:
             p = parse_line(line)
+            sizes[p['id_']] = p['w'] * p['h']
             for coordinates in get_squares(p['x'], p['y'], p['w'], p['h']):
                 fabric[coordinates].add(p['id_'])
 
     # count squares with more than one claim
     print(sum(len(square) >= 2 for square in fabric.values()))
+
+    # count uniquely claimed squares for each id
+    counts = defaultdict(int)
+    for square in fabric.values():
+        if len(square) == 1:
+            counts[square.pop()] += 1
+
+    # compare to original size of patch
+    for id_, count in counts.items():
+        if sizes[id_] == count:
+            print(id_)

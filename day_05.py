@@ -6,21 +6,30 @@
 
 if __name__ == '__main__':
     with open('input_05.txt', 'r') as stream:
-        polymer = list(stream.readline().strip())
-        print(len(polymer))
+        complete_polymer = stream.readline().strip()
 
-    removed = 1
-    while removed > 0:
-        removed = previous = 0
-        for index, element in enumerate(polymer):
-            if element == '#':
-                continue
-            elif polymer[previous] == element.swapcase():
-                polymer[previous] = '#'
-                polymer[index] = '#'
-                removed += 1
-            else:
-                previous = index
+    unique_units = ''.join(set(complete_polymer.lower()))
+    result_dict = {}
+    for unit in unique_units:
+        polymer = list(complete_polymer.replace(unit, '')
+                                       .replace(unit.swapcase(), ''))
+        removed = 1
+        while removed > 0:
+            removed = previous = 0
+            for index, element in enumerate(polymer):
+                if element == '#':
+                    continue
+                elif polymer[previous] == element.swapcase():
+                    polymer[previous] = '#'
+                    polymer[index] = '#'
+                    removed += 1
+                else:
+                    previous = index
+        result = ''.join(element for element in polymer if element != '#')
+        result_dict[unit] = len(result)
 
-    result = ''.join(element for element in polymer if element != '#')
-    print(len(result))
+    length_of_shortest_polymer = min(result_dict.values())
+    for unit, length in result_dict.items():
+        if length == length_of_shortest_polymer:
+            print(f'removing {unit} leads to a polymer of length {length}.')
+

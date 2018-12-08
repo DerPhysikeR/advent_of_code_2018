@@ -3,9 +3,9 @@
 2018-12-08 10:18:18
 @author: Paul Reiter
 """
-from datetime import datetime
+from datetime import datetime, time
 import pytest
-from day_04 import shifts, Line, parse_line, get_guard_id
+from day_04 import shifts, Line, parse_line, get_guard_id, minuterator
 
 
 @pytest.mark.parametrize('line, reference_time, reference_action', [
@@ -38,3 +38,11 @@ def test_shifts():
 
 def test_get_guard_id():
     assert 1069 == get_guard_id('Guard #1069 begins shift')
+
+
+def test_minuterator():
+    times = [time(23, 58), time(23, 59), time(0, 0), time(0, 1)]
+    iterator = zip(minuterator(datetime(2018, 12, 8, 23, 58),
+                               datetime(2018, 12, 9, 0, 2)), times)
+    for time_, reference in iterator:
+        assert time_ == reference

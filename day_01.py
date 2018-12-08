@@ -7,7 +7,7 @@ from itertools import cycle
 
 
 if __name__ == '__main__':
-    with open('01_input.txt', 'r') as stream:
+    with open('input_01.txt', 'r') as stream:
         frequency_changes = [int(frequency) for frequency
                              in stream.readlines()]
 

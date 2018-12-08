@@ -52,7 +52,7 @@ def distance(id_1, id_2):
 
 if __name__ == '__main__':
     # read all ids
-    with open('02_input.txt', 'r') as stream:
+    with open('input_02.txt', 'r') as stream:
         content = [line.rstrip() for line in stream.readlines()]
 
     # find doubles and triples and calculate checksum

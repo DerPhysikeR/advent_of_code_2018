@@ -28,7 +28,7 @@ def parse_line(line):
 if __name__ == '__main__':
     fabric = defaultdict(set)
     sizes = {}
-    with open('03_input.txt', 'r') as stream:
+    with open('input_03.txt', 'r') as stream:
         for line in stream:
             p = parse_line(line)
             sizes[p['id_']] = p['w'] * p['h']

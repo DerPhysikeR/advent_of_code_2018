@@ -76,3 +76,21 @@ if __name__ == '__main__':
             print(sleep_count)
 
     print(971*38)
+
+    # part 2: find guard who is most frequently asleep at the same minute
+    all_slept_minutes = defaultdict(lambda: defaultdict(int))
+    for shift in shifts(data):
+        guard = get_guard_id(shift[0].action)
+        for start, end in zip(shift[1::2], shift[2::2]):
+            for minute in minuterator(start.time, end.time):
+                all_slept_minutes[minute][guard] += 1
+
+    maximum_count = max(count for guards in all_slept_minutes.values()
+                        for count in guards.values())
+    for minute, guards in all_slept_minutes.items():
+        for guard, count in guards.items():
+            if count == maximum_count:
+                print(f'minute: {minute}')
+                print(f'guard id: {guard}')
+                print(f'sleep count: {count}')
+                print(f'guard x minute = {guard*minute.minute}')

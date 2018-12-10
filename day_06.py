@@ -38,10 +38,12 @@ if __name__ == '__main__':
     with open('input_06.txt', 'r') as stream:
         points = [parse_line(line) for line in stream.readlines()]
 
+    # initialize bounding box + 1 in each direction
     min_point, max_point = bounding_box(points)
     wide_min_point = Point(min_point.x-1, min_point.y-1)
     wide_max_point = Point(max_point.x+1, max_point.y+1)
 
+    # iterate over all cells, calculate distances and set membership
     wide_cells = {}
     for cell in box_iter(wide_min_point, wide_max_point):
         distances = [distance(cell, point) for point in points]
@@ -51,17 +53,21 @@ if __name__ == '__main__':
         else:
             wide_cells[cell] = '.'
 
+    # take only cells of actual bounding box
     cells = {point: wide_cells[point]
              for point in box_iter(min_point, max_point)}
 
+    # count membership cells for each point for bounding box
     cell_counts = defaultdict(int)
     for index in cells.values():
         cell_counts[index] += 1
 
+    # count membership cells for each point in wide bouding box
     wide_cell_counts = defaultdict(int)
     for index in wide_cells.values():
         wide_cell_counts[index] += 1
 
+    # exclude areas where the membership count differs
     stable_areas = {value: count for value, count in cell_counts.items()
                     if wide_cell_counts[value] == count}
     print(max(count for value, count in cell_counts.items()

@@ -34,6 +34,17 @@ def box_iter(min_point, max_point):
             yield Point(x, y)
 
 
+def frame_iter(min_point, max_point):
+    for x in range(min_point.x, max_point.x):
+        yield Point(x, min_point.y)
+    for y in range(min_point.y, max_point.y):
+        yield Point(max_point.x, y)
+    for x in range(max_point.x, min_point.x, -1):
+        yield Point(x, max_point.y)
+    for y in range(max_point.y, min_point.y, -1):
+        yield Point(min_point.x, y)
+
+
 if __name__ == '__main__':
     with open('input_06.txt', 'r') as stream:
         points = [parse_line(line) for line in stream.readlines()]
@@ -72,3 +83,27 @@ if __name__ == '__main__':
                     if wide_cell_counts[value] == count}
     print(max(count for value, count in cell_counts.items()
               if wide_cell_counts[value] == count))
+
+    # calculate center point of problem and add it to close points
+    center_point = Point(min_point.x + (max_point.x - min_point.x)//2,
+                         min_point.y + (max_point.y - min_point.y)//2)
+    close_cells = set()
+    if sum(distance(center_point, point) for point in points) < 10000:
+        close_cells = close_cells.union(set((center_point, )))
+
+    # calculate frame corners
+    frame_corners = [Point(center_point.x-1, center_point.y-1),
+                     Point(center_point.x+1, center_point.y+1)]
+
+    frame_distance_sums = set((5, ))
+    while any(fds < 10000 for fds in frame_distance_sums):
+        frame_distance_sums = set()
+        for frame_cell in frame_iter(*frame_corners):
+            distance_sum = sum(distance(frame_cell, point) for point in points)
+            if distance_sum < 10000:
+                close_cells.add(frame_cell)
+            frame_distance_sums.add(distance_sum)
+        frame_corners = [Point(frame_corners[0].x-1, frame_corners[0].y-1),
+                         Point(frame_corners[1].x+1, frame_corners[1].y+1)]
+
+    print(len(close_cells))

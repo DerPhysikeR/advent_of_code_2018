@@ -3,7 +3,8 @@
 2018-12-08 20:26:51
 @author: Paul Reiter
 """
-from day_06 import (Point, distance, parse_line, bounding_box, box_iter)
+from day_06 import (Point, distance, parse_line, bounding_box, box_iter,
+                    frame_iter)
 
 
 def test_distance():
@@ -25,3 +26,11 @@ def test_box_iter():
                  Point(2, 0), Point(2, 1)]
     assert all([ref == point for ref, point
                 in zip(reference, box_iter(Point(0, 0), Point(2, 1)))])
+
+
+def test_frame_iter():
+    reference = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0),
+                 Point(3, 1), Point(3, 2), Point(2, 2), Point(1, 2),
+                 Point(0, 2), Point(0, 1)]
+    assert all([ref == point for ref, point
+                in zip(reference, frame_iter(Point(0, 0), Point(3, 2)))])

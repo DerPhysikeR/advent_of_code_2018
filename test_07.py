@@ -3,7 +3,9 @@
 2018-12-13 20:13:07
 @author: Paul Reiter
 """
-from day_07 import parse_line, link, replace_with_children, Node, Tree
+import pytest
+from day_07 import (parse_line, link, replace_with_children, Node, Tree,
+                    time_of_task, Worker)
 
 
 def test_parse_line():
@@ -74,3 +76,58 @@ TEST_INPUT = ['Step C must be finished before step A can begin.',
 def test_tree_iter():
     tree = Tree.from_lines(TEST_INPUT)
     assert ''.join(node.value for node in tree) == 'CABDFE'
+
+
+@pytest.mark.parametrize('letter, time', [
+    ('A', 61),
+    ('B', 62),
+    ('C', 63),
+    ('Z', 86),
+])
+def test_time_of_task(letter, time):
+    assert time_of_task(letter) == time
+
+
+def test_worker():
+    worker = Worker()
+    assert worker.next() == '.'
+    assert worker.done
+    worker.add_task('A', 3)
+    assert not worker.done
+    assert worker.next() == 'A'
+    assert worker.next() == 'A'
+    assert worker.next() == 'A'
+    assert worker.done
+    assert worker.next() == '.'
+    worker.add_task('B', 2)
+    assert worker.next() == 'B'
+    assert worker.next() == 'B'
+    assert worker.done
+    worker.add_task('C', 1)
+    assert worker.next() == 'C'
+    assert worker.next() == '.'
+
+
+ASYNC_REFERENCE = [(0, 'C', '.', '.'),
+                   (1, 'C', '.', '.'),
+                   (2, 'C', '.', '.'),
+                   (3, 'A', 'F', 'C'),
+                   (4, 'B', 'F', 'CA'),
+                   (5, 'B', 'F', 'CA'),
+                   (6, 'D', 'F', 'CAB'),
+                   (7, 'D', 'F', 'CAB'),
+                   (8, 'D', 'F', 'CAB'),
+                   (9, 'D', '.', 'CABF'),
+                   (10, 'E', '.', 'CABFD'),
+                   (11, 'E', '.', 'CABFD'),
+                   (12, 'E', '.', 'CABFD'),
+                   (13, 'E', '.', 'CABFD'),
+                   (14, 'E', '.', 'CABFD'),
+                   (15, '.', '.', 'CABFDE')]
+
+
+def test_async_iter():
+    tree = Tree.from_lines(TEST_INPUT)
+    async_iter = tree.async_iter(2, offset=0)
+    for time_step, reference in zip(async_iter, ASYNC_REFERENCE):
+        assert time_step == reference

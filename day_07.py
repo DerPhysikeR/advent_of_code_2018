@@ -24,6 +24,10 @@ def replace_with_children(node_set, node):
     return node_set
 
 
+def time_of_task(letter, offset=60):
+    return ord(letter) - 64 + offset
+
+
 class Node:
 
     def __init__(self, value):
@@ -97,8 +101,69 @@ class Tree:
             done.add(step)
             yield step
 
+    def async_iter(self, num_workers, offset=60):
+        done = []
+        time = 0
+        workers = [Worker() for _ in range(num_workers)]
+        progress = set()
+        while len(done) < len(self.nodes):
+            # move finished tasks to `done`
+            for worker in workers:
+                if worker.done:
+                    if worker.task in self.nodes:
+                        done.append(self.nodes[worker.task])
+                        progress.remove(self.nodes[worker.task])
+            # find available tasks
+            available = [node for node in self.nodes.values()
+                         if all(parent in done for parent in node.parents)
+                         and node not in done and node not in progress]
+            available.sort(reverse=True)
+            # distribute available tasks to workers
+            for worker in workers:
+                if worker.done:
+                    if len(available) == 0:
+                        break
+                    task = available.pop()
+                    progress.add(task)
+                    worker.add_task(task.value,
+                                    time_of_task(task.value, offset=offset))
+            # yield time and tasks of all workers
+            done_string = (''.join(ele.value for ele in done)
+                           if len(done) > 0 else '.')
+            yield (time, *(worker.next() for worker in workers), done_string)
+            time += 1
+
+
+class Worker:
+
+    def __init__(self):
+        self.task = '.'
+        self.time = 0
+
+    def next(self):
+        if self.time > 0:
+            self.time -= 1
+            return self.task
+        self.task = '.'
+        return self.task
+
+    @property
+    def done(self):
+        return self.time <= 0
+
+    def add_task(self, task, time):
+        self.task = task
+        self.time = time
+
+    def __repr__(self):
+        return f"Worker(task='{self.task}', time='{self.time})'"
+
 
 if __name__ == '__main__':
     tree = Tree.from_file('input_07.txt')
     print(''.join(node.value for node in tree))
-    breakpoint()
+    tree = Tree.from_file('input_07.txt')
+    async_iter = tree.async_iter(5)
+    with open('output_07.txt', 'w') as stream:
+        for time_step in async_iter:
+            stream.write(str(time_step) + '\n')

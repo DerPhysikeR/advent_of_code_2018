@@ -11,6 +11,7 @@ class Node:
         self.n_children = n_children
         self.metadata = None
         self.children = []
+        self._value = None
 
     def add_child(self, child_node):
         if len(self.children) < self.n_children:
@@ -40,9 +41,24 @@ class Node:
         return (sum(self.metadata) +
                 sum(child.sum_metadata() for child in self.children))
 
+    @property
+    def value(self):
+        if self._value is None:
+            if len(self.children) == 0:
+                self._value = sum(self.metadata)
+            else:
+                self._value = 0
+                for index in self.metadata:
+                    try:
+                        self._value += self.children[index-1].value
+                    except IndexError:
+                        pass
+        return self._value
+
 
 if __name__ == '__main__':
     with open('input_08.txt', 'r') as stream:
         content = [int(ele) for ele in stream.readline().split()]
     root, remaining_list = Node.from_list(content)
     print(f'The sum of all metadata entries is: {root.sum_metadata()}')
+    print(f'The value of the root node is: {root.value}')

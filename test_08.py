@@ -36,3 +36,9 @@ def test_node_sum_metadata():
     test_list = [2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2]
     root, remaining_list = Node.from_list(test_list)
     assert 138 == root.sum_metadata()
+
+
+def test_node_value():
+    test_list = [2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2]
+    root, remaining_list = Node.from_list(test_list)
+    assert 66 == root.value

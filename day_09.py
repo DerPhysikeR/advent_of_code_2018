@@ -119,3 +119,9 @@ if __name__ == '__main__':
     max_score = max(player.score for player in result)
     print('The max score for a game with 428 players and 72061+1 marbles is: '
           f'{max_score}')
+
+    # part 2: last marble worth 100*72061
+    result = game(428, 72061*100)
+    max_score = max(player.score for player in result)
+    print('The max score for a game with 428 players and 100*72061+1 marbles'
+          f' is: {max_score}')

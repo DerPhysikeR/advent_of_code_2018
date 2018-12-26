@@ -63,12 +63,16 @@ class StarImage:
 
 def find_minimal_image(starimage):
     new_starimage = starimage
+    time = 0
     while new_starimage.size <= starimage.size:
         starimage = new_starimage
+        time += 1
         new_starimage = starimage.evolve(new=True)
-    return starimage
+    return starimage, time-1
 
 
 if __name__ == '__main__':
     starimage = StarImage.from_file('input_10.txt')
-    print(find_minimal_image(starimage))
+    minimal_starimage, time = find_minimal_image(starimage)
+    print(f'After {time} seconds the following image will appear:')
+    print(minimal_starimage)

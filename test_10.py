@@ -46,7 +46,7 @@ def test_star_image_str():
 
 def test_find_minimal_image():
     starimage = StarImage.from_file('test_input_10.txt')
-    result = find_minimal_image(starimage)
+    result = find_minimal_image(starimage)[0]
     reference = ('#...#..###\n'
                  '#...#...#.\n'
                  '#...#...#.\n'

@@ -4,8 +4,9 @@
 @author: Paul Reiter
 """
 import pytest
+import numpy as np
 from day_11 import (Point, grid_generator, get_digit, power_level, Grid,
-                    max_square_sum)
+                    max_square_sum, create_numpy_grid, NumGrid)
 
 
 def test_grid_generator():
@@ -59,3 +60,29 @@ def test_max_square_sum(grid, top_left_ref, total_power_ref):
     top_left, total_power = max_square_sum(grid)
     assert top_left == top_left_ref
     assert total_power == total_power_ref
+
+
+@pytest.mark.parametrize('grid, size, top_left_ref, total_power_ref', [
+    (Grid(Point(1, 1), Point(300, 300), 18), 16, Point(90, 269), 113),
+    (Grid(Point(1, 1), Point(300, 300), 42), 12, Point(232, 251), 119),
+])
+def test_max_square_sum_size(grid, size, top_left_ref, total_power_ref):
+    top_left, total_power = max_square_sum(grid, size)
+    assert top_left == top_left_ref
+    assert total_power == total_power_ref
+
+
+def test_create_numpy_grid():
+    npgrid = create_numpy_grid(Point(32, 44), Point(36, 48), 18)
+    reference = np.array([[-2, -4,  4,  4,  4], [-4,  4,  4,  4, -5],
+                          [4,  3,  3,  4, -4], [1,  1,  2,  4, -3],
+                          [-1,  0,  2, -5, -2]])
+    np.testing.assert_equal(npgrid, reference)
+
+
+def test_numgrid_square():
+    numgrid = NumGrid(Point(1, 1), Point(100, 100), 18)
+    reference = np.array([[-2, -4,  4,  4,  4], [-4,  4,  4,  4, -5],
+                          [4,  3,  3,  4, -4], [1,  1,  2,  4, -3],
+                          [-1,  0,  2, -5, -2]])
+    np.testing.assert_equal(numgrid.square(Point(32, 44), 5), reference)

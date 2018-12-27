@@ -55,4 +55,14 @@ if __name__ == '__main__':
     garden = Garden.from_file('input_12.txt')
     for _ in range(20):
         garden.evolve()
-    print(garden.value())
+    print(f'Value after 20 generations: {garden.value()}')
+
+    garden = Garden.from_file('input_12.txt')
+    value = 0
+    for i in range(110):
+        new_value = garden.value()
+        print(f'Garden value generation {i}: {new_value}, dvalue: '
+              f'{new_value-value}')
+        value = new_value
+        garden.evolve()
+    print(f'Value after 50000000000 generations: {5691+(50000000000-100)*62}')

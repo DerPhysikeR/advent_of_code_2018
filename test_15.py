@@ -7,7 +7,7 @@ from day_15 import (Point, Unit, Game, position_of_symbols_in_string,
                     get_bounding_box, grid_generator, sort_in_reading_order,
                     first_in_reading_order, update_dict, get_neighbors,
                     get_all_neighbors, neighbor_generator, move_towards,
-                    get_closest_point, step_closer)
+                    get_closest_point, step_closer, find_elf_power)
 
 
 def test_game_str():
@@ -112,6 +112,13 @@ def test_get_closest_point_same_point():
     obstacles = set((Point(2, 0), Point(2, 1), Point(2, -1)))
     other_points = set((Point(0, 0), Point(4, 0)))
     assert get_closest_point(point, other_points, obstacles) == Point(0, 0)
+
+
+def test_find_elf_power():
+    for game_string, outcome in ELF_POWER_GAMES:
+        game = Game(game_string, find_elf_power(game_string))
+        game.run()
+        assert game.outcome() == outcome
 
 
 MOVEMENT_TEST = ['#########\n'
@@ -264,3 +271,43 @@ TEST_OUTCOMES = [
                    '#.....G.#\n'
                    '#########'), 18740),
                  ]
+
+
+ELF_POWER_GAMES = [(('#######\n'
+                     '#.G...#\n'
+                     '#...EG#\n'
+                     '#.#.#G#\n'
+                     '#..G#E#\n'
+                     '#.....#\n'
+                     '#######'), 4988),
+                   (('#######\n'
+                     '#E..EG#\n'
+                     '#.#G.E#\n'
+                     '#E.##E#\n'
+                     '#G..#.#\n'
+                     '#..E#.#\n'
+                     '#######'), 31284),
+                   (('#######\n'
+                     '#E.G#.#\n'
+                     '#.#G..#\n'
+                     '#G.#.G#\n'
+                     '#G..#.#\n'
+                     '#...E.#\n'
+                     '#######'), 3478),
+                   (('#######\n'
+                     '#.E...#\n'
+                     '#.#..G#\n'
+                     '#.###.#\n'
+                     '#E#G#G#\n'
+                     '#...#G#\n'
+                     '#######'), 6474),
+                   (('#########\n'
+                     '#G......#\n'
+                     '#.E.#...#\n'
+                     '#..##..G#\n'
+                     '#...##..#\n'
+                     '#...#...#\n'
+                     '#.G...G.#\n'
+                     '#.....G.#\n'
+                     '#########'), 1140),
+                   ]

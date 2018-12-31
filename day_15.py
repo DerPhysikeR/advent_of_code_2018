@@ -21,10 +21,11 @@ class Unit:
 
 class Game:
 
-    def __init__(self, string):
+    def __init__(self, string, elfpower=3):
         positions = position_of_symbols_in_string(string)
         self.walls = positions['#']
-        self.elves = {position: Unit() for position in positions['E']}
+        self.elves = {position: Unit(attack_power=elfpower)
+                      for position in positions['E']}
         self.goblins = {position: Unit() for position in positions['G']}
         self.rounds_completed = 0
 
@@ -40,9 +41,11 @@ class Game:
         return '\n'.join(''.join(line) for line in zip(*[iter(result)]*width))
 
     @classmethod
-    def from_file(cls, filepath):
+    def from_file(cls, filepath, elfpower=False):
         with open(filepath, 'r') as stream:
-            return cls(stream.read())
+            game_string = stream.read()
+        elfpower = 3 if not elfpower else find_elf_power(game_string)
+        return cls(game_string, elfpower)
 
     @property
     def units(self):
@@ -206,8 +209,24 @@ def step_closer(point, target, obstacles=None):
             return first_in_reading_order(intersection)
 
 
+def find_elf_power(game_string):
+    number_of_all_elves = game_string.count('E')
+    number_of_elves, elf_power = 0, 2
+    while number_of_elves < number_of_all_elves:
+        elf_power += 1
+        game = Game(game_string, elf_power)
+        game.run()
+        number_of_elves = len(game.elves)
+    return next(iter(game.elves.values())).attack_power
+
+
 if __name__ == '__main__':
     game = Game.from_file('input_15.txt')
     game.run()
     print(game)
     print(f'The outcome is: {game.outcome()}')
+
+    game = Game.from_file('input_15.txt', True)
+    game.run()
+    print(game)
+    print(f'The outcome with strengthened elves is: {game.outcome()}')
